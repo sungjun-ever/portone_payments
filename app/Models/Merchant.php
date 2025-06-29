@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Store extends Model
+class Merchant extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = ['name'];
 
     public function things(): HasMany
     {
-        return $this->hasMany(StoreThing::class);
+        return $this->hasMany(MerchantThing::class);
     }
 }
