@@ -10,7 +10,8 @@ const root = createRoot(document.getElementById('app'));
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Main />} />
+      <Route index element={<Main />} />
+        
     </Routes>
   </BrowserRouter>
 );
