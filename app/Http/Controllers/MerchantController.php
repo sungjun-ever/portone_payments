@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Merchant\StoreMerchantRequest;
+use App\Http\Requests\Merchant\UpdateMerchantRequest;
 use App\Service\MerchantService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,17 +41,53 @@ class MerchantController extends Controller
 
         return response()->json([
             'result' => 'success',
-            'merchantId' => $merchantId,
-        ]);
+            'data' => [
+                'merchantId' => $merchantId,
+            ],
+        ], 201);
     }
     
-    public function show(Request $request, int $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
+        if (!is_numeric($id)) {
+            throw new \InvalidArgumentException();
+        }
+
         $merchant = $this->merchantService->findMerchant($id);
 
         return response()->json([
             'result' => 'success',
-            'merchant' => $merchant,
+            'data' => [
+                'merchant' => $merchant,
+            ],
+        ]);
+    }
+
+    public function update(UpdateMerchantRequest $request, int $id): JsonResponse
+    {
+        if (!is_numeric($id)) {
+            throw new \InvalidArgumentException();
+        }
+
+        $data = $request->validated();
+
+        $this->merchantService->updateMerchant($id, $data);
+
+        return response()->json([
+            'result' => 'success',
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        if (!is_numeric($id)) {
+            throw new \InvalidArgumentException();
+        }
+
+        $this->merchantService->deleteMerchant($id);
+
+        return response()->json([
+            'result' => 'success',
         ]);
     }
 }

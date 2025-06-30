@@ -3,17 +3,16 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
-class CreateResourceException extends Exception
+class DeleteResourceException extends Exception
 {
     public function report()
     {
         Log::error($this->getMessage(), request()->all());
     }
 
-    public function render(): JsonResponse
+    public function render()
     {
         return response()->json([
             'message' => 'INTERNAL_SERVER_ERROR'

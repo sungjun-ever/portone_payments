@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Store;
+namespace App\Repository\Merchant;
 
 interface MerchantRepositoryInterface
 {

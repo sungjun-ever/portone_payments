@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Store;
+namespace App\Repository\Merchant;
 
 use App\Models\Merchant;
 use App\Repository\BaseRepository;

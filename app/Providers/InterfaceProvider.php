@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Repository\Store\MerchantRepository;
-use App\Repository\Store\MerchantRepositoryInterface;
+use App\Repository\Merchant\MerchantRepository;
+use App\Repository\Merchant\MerchantRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class InterfaceProvider extends ServiceProvider
