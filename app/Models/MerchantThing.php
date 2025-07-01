@@ -15,7 +15,8 @@ class MerchantThing extends Model
         'merchant_id',
         'name',
         'description',
-        'price'
+        'price',
+        'stock'
     ];
 
     public function store(): BelongsTo

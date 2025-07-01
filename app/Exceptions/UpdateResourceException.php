@@ -16,7 +16,8 @@ class UpdateResourceException extends Exception
     public function render()
     {
         return response()->json([
-            'message' => 'INTERNAL_SERVER_ERROR'
+            'result' => 'error',
+            'message' => 'UPDATE_RESOURCE_ERROR'
         ], 500);
     }
 }

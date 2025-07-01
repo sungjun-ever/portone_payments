@@ -6,9 +6,9 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
-class CreateResourceException extends Exception
+class OrderCreationException extends Exception
 {
-    public function report()
+    public function report(): void
     {
         Log::error($this->getMessage(), request()->all());
     }
@@ -17,7 +17,7 @@ class CreateResourceException extends Exception
     {
         return response()->json([
             'result' => 'error',
-            'message' => 'CREATE_RESOURCE_ERROR'
+            'message' => 'CREATE_ORDER_ERROR'
         ], 500);
     }
 }
