@@ -18,6 +18,7 @@ readonly class OrderService
     {
     }
 
+    //@TODO: 재고 체크 방식 추가해야함
     public function storeOrder(array $order, array $orderItems): int
     {
         return DB::transaction(function () use ($order, $orderItems) {
