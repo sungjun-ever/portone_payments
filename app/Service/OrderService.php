@@ -2,12 +2,12 @@
 
 namespace App\Service;
 
-use App\Exceptions\CreateResourceException;
-use App\Exceptions\OrderCreationException;
-use App\Exceptions\OrderItemCreationException;
+use App\Exceptions\StockException;
+use App\Jobs\ProcessOrderCreation;
 use App\Repository\Order\OrderRepositoryInterface;
 use App\Repository\OrderItem\OrderItemRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 readonly class OrderService
 {
@@ -18,35 +18,35 @@ readonly class OrderService
     {
     }
 
-    //@TODO: 재고 체크 방식 추가해야함
     public function storeOrder(array $order, array $orderItems): int
     {
         return DB::transaction(function () use ($order, $orderItems) {
-            $insertOrder = $this->orderRepository->create($order);
+            foreach ($orderItems as $item) {
+                $merchantThingId = $item['thingId'];
+                $orderedQuantity = $item['quantity'];
+                $redisKey = "merchant_thing_stock:{$merchantThingId}";
 
-            if (!$insertOrder) {
-                throw new OrderCreationException("주문 정보 생성 실패");
-            }
+                $luaScript = "
+                    local current_stock = redis.call('GET', KEYS[1])
+                    if current_stock then
+                        if tonumber(current_stock) >= tonumber(ARGV[1]) then
+                            return redis.call('DECRBY', KEYS[1], ARGV[1])
+                        end
+                    end
+                    return -1
+                ";
 
-            $orderId = $insertOrder->id;
+                $result = Redis::eval($luaScript, 1, $redisKey, $orderedQuantity);
 
-            $processedOrderItems = collect($orderItems)->map(function ($item) use ($orderId) {
-                $item['order_id'] = $orderId;
-                return $item;
-            })->toArray();
-
-            $insertOrderItemCount = 0;
-            foreach ($processedOrderItems as $item) {
-                if ($this->orderItemRepository->create($item)) {
-                    $insertOrderItemCount++;
+                if ($result === -1) {
+                    // 재고 부족 시 예외 발생 (이 시점에서 사용자에게 즉시 알릴 수 있습니다)
+                    throw new StockException("merchant_thing_id: {$merchantThingId})의 재고가 부족합니다.");
                 }
             }
 
-            if ($insertOrderItemCount !== count($processedOrderItems)) {
-                throw new OrderItemCreationException("주문 항목 생성 실패");
-            }
+            ProcessOrderCreation::dispatch($order, $orderItems);
 
-            return $orderId;
+            return true;
         });
 
 

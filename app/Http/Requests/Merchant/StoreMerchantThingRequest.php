@@ -18,9 +18,10 @@ class StoreMerchantThingRequest extends FormRequest
     {
         $this->merge([
             'merchantId' => strip_tags($this->post('merchantId')),
-            'name' => strip_tags($this->post('name')),
-            'description' => strip_tags($this->post('description')),
-            'price' => strip_tags($this->post('price')),
+            'name' => trim(strip_tags($this->post('name'))),
+            'description' => trim(strip_tags($this->post('description'))),
+            'price' => trim(strip_tags($this->post('price'))),
+            'stock' => trim($this->post('stock', 0)),
         ]);
     }
 
@@ -36,6 +37,7 @@ class StoreMerchantThingRequest extends FormRequest
             'name' => 'required|string|max:100',
             'description' => 'nullable|string|max:255',
             'price' => 'required|numeric',
+            'stock' => 'nullable|numeric',
         ];
     }
 
@@ -56,6 +58,9 @@ class StoreMerchantThingRequest extends FormRequest
             'price' => [
                 'required' => '상품 가격은 필수값입니다.',
                 'numeric' => '상품 가격 타입을 확인해주세요.'
+            ],
+            'stock' => [
+                'numeric' => '수량을 확인해주세요.'
             ],
         ];
     }

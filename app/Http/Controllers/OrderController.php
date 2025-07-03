@@ -32,7 +32,7 @@ class OrderController extends Controller
 
         $data = $request->validated();
 
-        $orderId = $this->orderService->storeOrder([
+        $this->orderService->storeOrder([
             'user_id' => $data['userId'],
             'order_number' => $data['orderNumber'],
             'total_amount' => $data['totalAmount'],
@@ -43,7 +43,6 @@ class OrderController extends Controller
 
         return response()->json([
             'result' => 'success',
-            'orderId' => $orderId,
         ], 201);
     }
 }
